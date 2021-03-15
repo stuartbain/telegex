@@ -59,8 +59,6 @@ defmodule EchoBot.UpdatesPoller do
           last_offset
       end
 
-    # A pull request every 35ms to avoid 429 error codes
-    :timer.sleep(35)
     schedule_pull_updates()
 
     {:noreply, %{state | offset: offset}}
@@ -68,6 +66,7 @@ defmodule EchoBot.UpdatesPoller do
 
   # Send pull messages to the service itself
   defp schedule_pull_updates do
-    send(self(), :pull)
+    # A pull request every 35ms to avoid 429 error codes
+    Process.send_after(self(), :pull, 35)
   end
 end
